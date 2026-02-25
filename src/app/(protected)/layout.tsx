@@ -9,13 +9,12 @@ export default function ProtectedLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const token = useAuthStore((state) => state.accessToken);
-
+  const token = useAuthStore((s) => s.accessToken);
   const router = useRouter();
 
   useEffect(() => {
     if (!token) {
-      router.push('/login');
+      router.replace('/login');
     }
   }, [token, router]);
 

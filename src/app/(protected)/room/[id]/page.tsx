@@ -5,6 +5,13 @@ import { useEffect, useState } from 'react';
 import api from '@/services/api';
 import { Room } from '@/modules/rooms/rooms.types';
 import { Button } from '@/components/ui/button';
+import { useSocket } from '@/hooks/useSockets';
+import { useRoomSocket } from '@/hooks/useRoomSocket';
+import { useWebRTC } from '@/hooks/useWebRTC';
+import { useSocketStore } from '@/store/socket.store';
+import { useCallStore } from '@/store/call.store';
+import LocalVideo from '@/components/video/LocalVideo';
+import RemoteVideo from '@/components/video/RemoteVideo';
 
 export default function RoomPage() {
   const { id } = useParams<{ id: string }>();
@@ -14,12 +21,19 @@ export default function RoomPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const isConnected = useSocketStore((s) => s.connected);
+  const callStatus = useCallStore((s) => s.callStatus);
+
+  useSocket();
+  useRoomSocket(id);
+  useWebRTC(id);
+
   useEffect(() => {
     const fetchRoom = async () => {
       try {
         const { data } = await api.get<Room>(`/rooms/${id}`);
         setRoom(data);
-      } catch (err) {
+      } catch {
         setError('Room not found or inaccessible.');
       } finally {
         setLoading(false);
@@ -49,12 +63,24 @@ export default function RoomPage() {
     );
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold">{room.name}</h1>
+    <div className="min-h-screen p-6 space-y-6">
+      <div className="flex justify-between">
+        <p>
+          Socket:{' '}
+          <span className={isConnected ? 'text-green-500' : 'text-red-500'}>
+            {isConnected ? 'Connected' : 'Disconnected'}
+          </span>
+        </p>
 
-      <p className="text-sm text-gray-500">Room ID: {room.id}</p>
+        <p>
+          Call Status: <span className="font-semibold">{callStatus}</span>
+        </p>
+      </div>
 
-      {/* WebRTC will go here in F5 */}
+      <div className="grid grid-cols-2 gap-4">
+        <LocalVideo />
+        <RemoteVideo />
+      </div>
     </div>
   );
 }

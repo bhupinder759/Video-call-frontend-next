@@ -35,7 +35,10 @@ export default function LoginPage() {
 
       setAccessToken(response.accessToken);
 
-      router.push('/dashboard');
+      console.log('Before navigation');
+      // // router.push('/dashboard');
+      router.replace('/dashboard');
+      console.log('After navigation');
     } catch (error) {
       setApiError('Invalid email or password');
     } finally {
