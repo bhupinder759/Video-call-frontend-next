@@ -7,7 +7,9 @@ import { loginSchema } from '@/modules/auth/auth.schema';
 import { loginRequest } from '@/modules/auth/auth.api';
 import { useAuthStore } from '@/store/auth.store';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { z } from 'zod';
+import { Video } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -36,7 +38,6 @@ export default function LoginPage() {
       setAccessToken(response.accessToken);
 
       console.log('Before navigation');
-      // // router.push('/dashboard');
       router.replace('/dashboard');
       console.log('After navigation');
     } catch (error) {
@@ -47,30 +48,51 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-muted">
-      <Card className="p-6 w-96 space-y-4 shadow-lg">
-        <h2 className="text-xl font-semibold text-center">Login</h2>
+    <div className="relative flex items-center justify-center min-h-screen overflow-hidden bg-zinc-950 selection:bg-indigo-500/30 px-4">
+      {/* Background Gradient Effects */}
+      <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] h-[500px] w-[500px] rounded-full bg-indigo-600/20 blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] h-[500px] w-[500px] rounded-full bg-purple-600/20 blur-[120px]" />
+      </div>
 
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <Card className="relative z-10 w-full max-w-md p-8 border-zinc-800/50 bg-zinc-900/60 backdrop-blur-xl shadow-2xl rounded-2xl">
+        <div className="flex flex-col items-center mb-8">
+          <div className="flex items-center justify-center w-12 h-12 mb-4 rounded-xl bg-indigo-600 shadow-[0_0_20px_-5px_rgba(79,70,229,0.5)]">
+            <Video className="w-6 h-6 text-white" />
+          </div>
+          <h2 className="text-2xl font-bold tracking-tight text-zinc-100">
+            Welcome back
+          </h2>
+          <p className="mt-2 text-sm text-zinc-400">
+            Enter your credentials to access your account
+          </p>
+        </div>
+
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
           {/* Email */}
-          <div className="space-y-1">
-            <Input placeholder="Email" {...form.register('email')} />
+          <div className="space-y-2">
+            <Input
+              placeholder="name@example.com"
+              className="h-11 bg-zinc-950/50 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-indigo-500"
+              {...form.register('email')}
+            />
             {form.formState.errors.email && (
-              <p className="text-red-500 text-sm">
+              <p className="text-sm font-medium text-red-500/90">
                 {form.formState.errors.email.message}
               </p>
             )}
           </div>
 
           {/* Password */}
-          <div className="space-y-1">
+          <div className="space-y-2">
             <Input
               type="password"
-              placeholder="Password"
+              placeholder="••••••••"
+              className="h-11 bg-zinc-950/50 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-indigo-500"
               {...form.register('password')}
             />
             {form.formState.errors.password && (
-              <p className="text-red-500 text-sm">
+              <p className="text-sm font-medium text-red-500/90">
                 {form.formState.errors.password.message}
               </p>
             )}
@@ -78,13 +100,30 @@ export default function LoginPage() {
 
           {/* API Error */}
           {apiError && (
-            <p className="text-red-600 text-sm text-center">{apiError}</p>
+            <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-center">
+              <p className="text-sm font-medium text-red-400">{apiError}</p>
+            </div>
           )}
 
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Logging in...' : 'Login'}
+          <Button
+            type="submit"
+            className="w-full h-11 text-base font-semibold text-white transition-all bg-indigo-600 hover:bg-indigo-500 shadow-[0_0_20px_-5px_rgba(79,70,229,0.5)] hover:shadow-[0_0_25px_-5px_rgba(79,70,229,0.6)]"
+            disabled={loading}
+          >
+            {loading ? 'Signing in...' : 'Sign in'}
           </Button>
         </form>
+
+        {/* Register Link */}
+        <div className="mt-8 text-sm text-center text-zinc-400">
+          Don't have an account?{' '}
+          <Link
+            href="/register"
+            className="font-medium text-indigo-400 transition-colors hover:text-indigo-300"
+          >
+            Create one
+          </Link>
+        </div>
       </Card>
     </div>
   );

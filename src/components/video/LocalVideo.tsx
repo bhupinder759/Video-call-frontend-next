@@ -20,7 +20,9 @@ export default function LocalVideo() {
       autoPlay
       muted
       playsInline
-      className="w-full h-64 bg-black rounded"
+      /* Added object-cover to fill the container, and mirror effect (scale-x-[-1]) 
+         so it feels like looking in a mirror, which is standard for local webcams */
+      className="w-full h-full object-cover bg-zinc-950 rounded-2xl transform scale-x-[-1]"
     />
   );
 }
